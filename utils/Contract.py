@@ -35,18 +35,22 @@ class Contract:
 
     def __get_abi(self):
         endpoint = '%s%s%s' % (ABI_ENDPOINT, self.address, RAW_FORMAT)
-        self.logger.info(f"Fetching abi: {endpoint}")
-        response = requests.get(endpoint)
+        with self.logger.console.status("[bold green]Fetching abi..."):
+            response = requests.get(endpoint)
+        self.logger.info(f"Fetching abi done")
         return response.content.decode('utf-8')
 
     def call_function(self, contract_call_function, contract_call_function_parameters):
         function = getattr(self.contract.functions, f'{contract_call_function}')
         if contract_call_function_parameters:
-            self.logger.info(f"Call function {contract_call_function}({contract_call_function_parameters})")
-            response = function(contract_call_function_parameters).call()
+            function_string = f"{contract_call_function}({contract_call_function_parameters})"
+            with self.logger.console.status(f"[bold green]Calling function {function_string}..."):
+                response = function(contract_call_function_parameters).call()
         else:
-            self.logger.info(f"Call function {contract_call_function}()")
-            response = function().call()
+            function_string = f"{contract_call_function}()"
+            with self.logger.console.status(f"[bold green]Calling function {function_string}..."):
+                response = function().call()
+        self.logger.success(f"Calling function {function_string} done")
         self.logger.success(f"Reponse: {response}")
 
 

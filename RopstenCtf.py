@@ -81,6 +81,6 @@ if __name__ == "__main__":
             wallet=wallet
         )
         if options.contract_info:
-            print(contract.all_functions())
+            contract.all_functions()
         if options.contract_call:
             contract.call_function(options.contract_call_function, options.contract_call_function_parameters)

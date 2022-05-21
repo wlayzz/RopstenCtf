@@ -11,5 +11,8 @@ class Logger:
     def info(self, message):
         self.console.print("{}[INFO]{} {}".format("[bold blue]", "[/bold blue]", message), highlight=False)
 
+    def list(self, message):
+        self.console.print("\t{}[*]{} {}".format("[bold blue]", "[/bold blue]", message), highlight=False)
+
     def result(self, message):
         self.console.print("[+] {}".format(message), highlight=False)

@@ -11,8 +11,8 @@ class Contract:
         self.logger = logger
         self.abi = self.__get_abi()
         self.contract = wallet.provider.web3.eth.contract(
-            address = self.address,
-            abi = self.abi
+            address=self.address,
+            abi=self.abi
         )
         """
         self.transaction = {
@@ -22,14 +22,22 @@ class Contract:
         """
 
     def all_functions(self):
-        return self.contract.all_functions()
+        self.logger.success('List of functions:')
+        for f in self.contract.all_functions():
+            fname = f.fn_name
+            parameters = ''
+            for i in f.abi["inputs"]:
+                parameter = f"{i['name']}:{i['type']}"
+                if i != f.abi["inputs"][-1]:
+                    parameter += ', '
+                parameters += parameter
+            self.logger.list(f"{fname}({parameters})")
 
     def __get_abi(self):
         endpoint = '%s%s%s' % (ABI_ENDPOINT, self.address, RAW_FORMAT)
         self.logger.info(f"Fetching abi: {endpoint}")
         response = requests.get(endpoint)
         return response.content.decode('utf-8')
-
 
     def call_function(self, contract_call_function, contract_call_function_parameters):
         function = getattr(self.contract.functions, f'{contract_call_function}')
@@ -40,3 +48,5 @@ class Contract:
             self.logger.info(f"Call function {contract_call_function}()")
             response = function().call()
         self.logger.success(f"Reponse: {response}")
+
+

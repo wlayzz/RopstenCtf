@@ -31,9 +31,10 @@ def arg_parse():
     contract_mode.add_argument("--info", dest="contract_info", action="store_true", help="Informations of smart contract")
     contract_call_action = contract_mode.add_mutually_exclusive_group(required=False)
     contract_call_action.add_argument("--call", dest="contract_call", action="store_true", help="Call function of smart contract")
+    contract_call_action.add_argument("--write", dest="contract_write", action="store_true", help="Call function of smart contract")
     contract_call = contract_call_action.add_argument_group("Function to call with parameters")
-    contract_call.add_argument("-f", "--function", dest="contract_call_function", action="store", help="Name of function to call")
-    contract_call.add_argument("-p", "--parameters", dest="contract_call_function_parameters", action="store", help="Parameters of function to call")
+    contract_call.add_argument("-f", "--function", dest="contract_function", action="store", help="Name of function to call")
+    contract_call.add_argument("-p", "--parameters", dest="contract_function_parameters", action="store", help="Parameters of function to call")
 
     subparsers = parser.add_subparsers(help="actions", dest="action")
     subparsers.add_parser("wallet", parents=[wallet_mode], help="generate new wallet")
@@ -54,6 +55,7 @@ if __name__ == "__main__":
         project_id='d74af836f09342fc8dde42c9335ecd2e',
         logger=logger
     )
+
     provider.check_connection()
 
     wallet = Wallet(
@@ -83,4 +85,6 @@ if __name__ == "__main__":
         if options.contract_info:
             contract.all_functions()
         if options.contract_call:
-            contract.call_function(options.contract_call_function, options.contract_call_function_parameters)
+            contract.call_function(options.contract_function, options.contract_function_parameters)
+        if options.contract_write:
+            contract.write_function(options.contract_function, options.contract_function_parameters)

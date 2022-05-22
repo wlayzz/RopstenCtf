@@ -24,6 +24,7 @@ class Wallet:
         self.private_key = "0x" + priv
         self.address = Account.from_key(self.private_key).address
         self.__store_key()
+        self.logger.info("You can claim $rETH unsing this faucet: https://faucet.egorfine.com/")
 
     def __store_key(self):
         with open('.env', 'w') as f:
@@ -34,6 +35,7 @@ class Wallet:
         self.logger.info(f"These informations are stored in .env file and will be used for smart contract interactions")
 
     def get_balance(self):
+        self.logger.info("You can claim $rETH unsing this faucet: https://faucet.egorfine.com/")
         balance = self.provider.web3.eth.get_balance(self.address)
         balance /= pow(10,18)
         self.logger.success(f"Balance: {balance} $rETH")

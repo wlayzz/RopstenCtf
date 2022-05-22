@@ -25,6 +25,7 @@ def arg_parse():
     wallet_mode.add_argument("--generate", dest="generate", action="store_true", help="Generate new wallet")
     wallet_mode.add_argument("--balance", dest="balance", action="store_true", help="Get wallet balance")
     wallet_mode.add_argument("--import-key", dest="import_key", action="store", help="Import private key")
+    wallet_mode.add_argument("--provider-key", dest="provider_key", action="store", help="Import provider key")
 
     contract_mode = argparse.ArgumentParser(add_help=False)
     contract_mode.add_argument("--address", dest="contract_address", required=True, action="store", help="Address of smart contract")
@@ -52,11 +53,11 @@ if __name__ == "__main__":
 
     # Initialisation
     provider = Provider(
-        project_id='d74af836f09342fc8dde42c9335ecd2e',
         logger=logger
     )
-
-    provider.check_connection()
+    if options.action == "wallet" and options.provider_key:
+        provider.import_key(options.provider_key)
+    provider.initiate_provider()
 
     wallet = Wallet(
         provider=provider,

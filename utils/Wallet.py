@@ -9,17 +9,22 @@ import os
 import secrets
 from eth_account import Account
 from dotenv import load_dotenv
+from utils.Utils import write_private_key_to_env_file
+
 
 class Wallet:
     def __init__(self, provider, logger):
         self.provider = provider
         self.logger = logger
+        self.private_key = None
+        self.address = None
 
     def initiate_account(self):
-        load_dotenv()
-        self.private_key = os.getenv("private_key")
-        self.address = os.getenv("address")
-        if(self.private_key and self.address):
+        if self.private_key is None and self.address is None:
+            load_dotenv()
+            self.private_key = os.getenv("private_key")
+            self.address = os.getenv("address")
+        if self.private_key is not None and self.address is not None:
             acnt = self.provider.web3.eth.account.privateKeyToAccount(self.private_key)
             self.provider.web3.eth.defaultAccount = acnt.address
             self.account_address = acnt.address
@@ -34,12 +39,7 @@ class Wallet:
         self.logger.info("You can claim $rETH unsing this faucet: https://faucet.egorfine.com/")
 
     def __store_key(self):
-        with open('.env', 'w') as f:
-            f.write(f"private_key={self.private_key}\n")
-            f.write(f"address={self.address}")
-        self.logger.info(f"Your secret key is {self.private_key} (keep this secret)")
-        self.logger.info(f"Your public adress is {self.address}")
-        self.logger.info(f"These informations are stored in .env file and will be used for smart contract interactions")
+        write_private_key_to_env_file(self)
 
     def get_balance(self):
         self.logger.info("You can claim $rETH unsing this faucet: https://faucet.egorfine.com/")

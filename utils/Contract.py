@@ -41,6 +41,15 @@ class Contract:
                 parameters += parameter
             self.logger.list(f"{fname}({parameters})")
 
+    def get_function_parameter_type(self, function, parameter):
+        for f in self.contract.all_functions():
+            if function == f.fn_name:
+                if f.abi["inputs"][0]['type'] == 'uint256':
+                    return int(parameter)
+                if f.abi["inputs"][0]['type'] == 'address':
+                    return str(parameter)
+
+
     def __get_abi(self):
         endpoint = '%s%s%s' % (ABI_ENDPOINT, self.address, RAW_FORMAT)
         with self.logger.console.status("[bold green]Fetching abi..."):
@@ -51,10 +60,11 @@ class Contract:
     def call_function(self, contract_function, contract_function_parameters):
         function = getattr(self.contract.functions, f'{contract_function}')
         if contract_function_parameters:
-            function_string = f"{contract_function}({contract_function_parameters})"
+            parameter = self.get_function_parameter_type(contract_function, contract_function_parameters)
+            function_string = f"{contract_function}({parameter})"
             with self.logger.console.status(f"[bold green]Calling function {function_string}..."):
                 try:
-                    response = function(contract_function_parameters).call()
+                    response = function(parameter).call()
                     self.logger.info(f"Calling function done")
                     self.logger.success(f"Reponse {function_string}: {response}")
                 except exceptions.SolidityError as error:
@@ -64,18 +74,19 @@ class Contract:
             with self.logger.console.status(f"[bold green]Calling function {function_string}..."):
                 try:
                     response = function().call()
-                    self.logger.info(f"Calling function done")
-                    self.logger.success(f"Reponse {function_string}: {response}")
                 except exceptions.SolidityError as error:
                     self.logger.error(error)
+            self.logger.info(f"Calling function done")
+            self.logger.success(f"Reponse {function_string}: {response}")
 
     def write_function(self, contract_function, contract_function_parameters):
         function = getattr(self.contract.functions, f'{contract_function}')
         web3 = self.wallet.provider.web3
         nonce = web3.eth.get_transaction_count(self.wallet.address)
+        parameter = self.get_function_parameter_type(contract_function, contract_function_parameters)
         if contract_function_parameters:
-            function_string = f"{contract_function}({contract_function_parameters})"
-            transaction = function(contract_function_parameters).buildTransaction({
+            function_string = f"{contract_function}({parameter})"
+            transaction = function(parameter).buildTransaction({
                 'gas': 70000,
                 'gasPrice': self.wallet.provider.web3.toWei('20', 'gwei'),
                 'from': self.wallet.address,
@@ -94,18 +105,23 @@ class Contract:
         txn_hash = web3.eth.sendRawTransaction(signed_txn.rawTransaction)
         txn = web3.toHex(web3.keccak(signed_txn.rawTransaction))
         self.logger.info(f'Inspect transaction here: https://ropsten.etherscan.io/tx/{txn}')
-        with self.logger.console.status(f"[bold green]Calling function {function_string}, this can take times..."):
+        with self.logger.console.status(f"[bold green]Sending transaction {function_string}, this can take times..."):
             try:
                 response = web3.eth.wait_for_transaction_receipt(txn_hash)
-                self.logger.info(f"Transaction done")
-                self.logger.success(f"Reponse {function_string}:")
-                self.parse_write_response(response)
             except exceptions.SolidityError as error:
                 self.logger.error(error)
+            except exceptions.TimeExhausted as error:
+                self.logger.error(error)
+        self.logger.info(f"Transaction done")
+        self.logger.success(f"Reponse {function_string}:")
+        self.parse_write_response(response, contract_function, contract_function_parameters)
 
-    def parse_write_response(self, response):
+    def parse_write_response(self, response, contract_function, contract_function_parameters):
         status = response["status"]
+        self.logger.debug(response)
         if status == 0:
             self.logger.console.print("\t{}[*]{} Transaction status: {}fail{}".format("[bold blue]", "[/bold blue]", "[bold red]", "[/bold red]"), highlight=False)
+            self.logger.info('Calling function to retrive informations')
+            self.call_function(contract_function, contract_function_parameters)
         else:
             self.logger.console.print("\t{}[*]{} Transaction status: {}success{}".format("[bold blue]", "[/bold blue]", "[bold green]", "[/bold green]"), highlight=False)

@@ -49,7 +49,7 @@ def arg_parse():
 if __name__ == "__main__":
     options = arg_parse()
     console = Console()
-    logger = Logger(console)
+    logger = Logger(console, options.verbose)
 
     # Initialisation
     provider = Provider(

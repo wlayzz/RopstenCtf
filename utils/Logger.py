@@ -20,3 +20,7 @@ class Logger:
 
     def list(self, message):
         self.console.print("\t{}[*]{} {}".format("[bold blue]", "[/bold blue]", message), highlight=False)
+
+    def debug(self, message):
+        if self.verbosity:
+            self.console.print("{}[DEBUG]{} {}".format("[bold magenta]", "[/bold magenta]", message), highlight=False)

@@ -40,6 +40,7 @@ def arg_parse():
     contract_call.add_argument("-p", "--parameters", dest="contract_function_parameters", action="store", help="Parameters of function to call")
     contract_call.add_argument("-f", "--file", dest="contract_source", action="store", help="Path of smart contract to deploy")
     contract_call.add_argument("-a", "--abi", dest="contract_abi", action="store", help="abi of smart contract")
+    contract_call.add_argument("-e", "--ether", dest="contract_ether", action="store", default=0, help="abi of smart contract")
 
     subparsers = parser.add_subparsers(help="actions", dest="action")
     subparsers.add_parser("wallet", parents=[wallet_mode], help="generate new wallet")
@@ -97,4 +98,4 @@ if __name__ == "__main__":
         if options.contract_call:
             contract.call_function(options.contract_function, options.contract_function_parameters)
         if options.contract_write:
-            contract.write_function(options.contract_function, options.contract_function_parameters)
+            contract.write_function(options.contract_function, options.contract_function_parameters, options.contract_ether)

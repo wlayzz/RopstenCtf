@@ -45,7 +45,7 @@ class Contract:
     def get_function_parameter_type(self, function, parameter, index):
         for f in self.contract.all_functions():
             if function == f.fn_name:
-                if f.abi["inputs"][index]['type'] == 'uint256':
+                if f.abi["inputs"][index]['type'] == 'uint256' or f.abi["inputs"][index]['type'] == 'uint8':
                     return int(parameter)
                 if f.abi["inputs"][index]['type'] == 'address':
                     return str(parameter)
@@ -82,7 +82,8 @@ class Contract:
                 except exceptions.SolidityError as error:
                     self.logger.error(error)
 
-    def write_function(self, contract_function, contract_function_parameters):
+    def write_function(self, contract_function, contract_function_parameters, ether):
+        ether=int(ether)
         parameters = []
         function = getattr(self.contract.functions, f'{contract_function}')
         web3 = self.wallet.provider.web3
@@ -97,7 +98,8 @@ class Contract:
                 'gas': 2000000,
                 'gasPrice': web3.toWei('40', 'gwei'),
                 'from': self.wallet.address,
-                'nonce': nonce
+                'nonce': nonce,
+                'value': web3.toWei(ether, 'ether')
             })
         if len(parameters) == 1:
             parameter = self.get_function_parameter_type(contract_function, contract_function_parameters, 0)
@@ -106,7 +108,8 @@ class Contract:
                 'gas': 2000000,
                 'gasPrice': web3.toWei('40', 'gwei'),
                 'from': self.wallet.address,
-                'nonce': nonce
+                'nonce': nonce,
+                'value': web3.toWei(ether, 'ether')
             })
         if len(parameters) == 0:
             function_string = f"{contract_function}()"
@@ -114,7 +117,8 @@ class Contract:
                 'gas': 2000000,
                 'gasPrice': web3.toWei('40', 'gwei'),
                 'from': self.wallet.address,
-                'nonce': nonce
+                'nonce': nonce,
+                'value': web3.toWei(ether, 'ether')
             })
 
         signed_txn = web3.eth.account.signTransaction(transaction, private_key=self.wallet.private_key)

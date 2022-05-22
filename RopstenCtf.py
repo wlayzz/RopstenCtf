@@ -28,14 +28,18 @@ def arg_parse():
     wallet_mode.add_argument("--provider-key", dest="provider_key", action="store", help="Import provider key")
 
     contract_mode = argparse.ArgumentParser(add_help=False)
-    contract_mode.add_argument("--address", dest="contract_address", required=True, action="store", help="Address of smart contract")
+    contract_mode.add_argument("--address", dest="contract_address", action="store", help="Address of smart contract")
     contract_mode.add_argument("--info", dest="contract_info", action="store_true", help="Informations of smart contract")
     contract_call_action = contract_mode.add_mutually_exclusive_group(required=False)
     contract_call_action.add_argument("--call", dest="contract_call", action="store_true", help="Call function of smart contract")
     contract_call_action.add_argument("--write", dest="contract_write", action="store_true", help="Call function of smart contract")
+    contract_call_action.add_argument("--deploy", dest="contract_deploy", action="store_true", help="Deploy a smart contract")
+    contract_call_action.add_argument("--compile", dest="contract_compile", action="store_true", help="Compile a smart contract")
     contract_call = contract_call_action.add_argument_group("Function to call with parameters")
-    contract_call.add_argument("-f", "--function", dest="contract_function", action="store", help="Name of function to call")
+    contract_call.add_argument("-fc", "--function", dest="contract_function", action="store", help="Name of function to call")
     contract_call.add_argument("-p", "--parameters", dest="contract_function_parameters", action="store", help="Parameters of function to call")
+    contract_call.add_argument("-f", "--file", dest="contract_source", action="store", help="Path of smart contract to deploy")
+    contract_call.add_argument("-a", "--abi", dest="contract_abi", action="store", help="abi of smart contract")
 
     subparsers = parser.add_subparsers(help="actions", dest="action")
     subparsers.add_parser("wallet", parents=[wallet_mode], help="generate new wallet")
@@ -80,9 +84,14 @@ if __name__ == "__main__":
     if options.action == "contract":
         contract = Contract(
             logger=logger,
-            address=options.contract_address,
             wallet=wallet
         )
+        if options.contract_address:
+            contract.init_contract_with_adress(options.contract_address, options.contract_abi)
+        if options.contract_compile and options.contract_source:
+            contract.compile(options.contract_source)
+        if options.contract_deploy and options.contract_source and options.contract_deploy_name:
+            contract.deploy(options.contract_source)
         if options.contract_info:
             contract.all_functions()
         if options.contract_call:

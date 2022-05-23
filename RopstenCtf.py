@@ -12,6 +12,7 @@ from utils.Crypto import Crypto
 from utils.Provider import Provider
 from utils.Contract import Contract
 from utils.Logger import Logger
+from utils.Transaction import Transaction
 from utils.Wallet import Wallet
 
 
@@ -56,10 +57,16 @@ def arg_parse():
     input_type_options.add_argument("-uint8", dest="crypto_type", action="store_const", const='uint8', help="Type of input to hash")
     input_type_options.add_argument("-uint24", dest="crypto_type", action="store_const", const='uint24',  help="Type of input to hash")
 
+    transaction_mode = argparse.ArgumentParser(add_help=False)
+    transaction_mode.add_argument("--txn", dest="transaction_txn", action="store", help="Hash of transaction")
+    transaction_mode.add_argument("--block-info", dest="transaction_block_info", action="store_true", help="Retrieve informations of block")
+    transaction_mode.add_argument("--all", dest="transaction_all", action="store_true", default=False, help="Print all informations, hidden informations are represented by ...")
+
     subparsers = parser.add_subparsers(help="actions", dest="action")
     subparsers.add_parser("wallet", parents=[wallet_mode], help="generate new wallet")
     subparsers.add_parser("contract", parents=[contract_mode], help="interact with smart contract")
     subparsers.add_parser("crypto", parents=[crypto_mode], help="crypto utils for ethereum smart contract")
+    subparsers.add_parser("transaction", parents=[transaction_mode], help="retrieve informations of a transaction")
 
     options = parser.parse_args()
 
@@ -71,53 +78,10 @@ if __name__ == "__main__":
     console = Console()
     logger = Logger(console, options.verbose)
 
-    # Initialisation
-    provider = Provider(
-        logger=logger
-    )
-    if options.action == "wallet" and options.provider_key:
-        provider.import_key(options.provider_key)
-    provider.initiate_provider()
-
-    wallet = Wallet(
-        provider=provider,
-        logger=logger
-    )
-
-    if options.action == "wallet":
-        if options.generate:
-            wallet.generate_wallet()
-        if options.import_key:
-            wallet.import_key(options.import_key)
-    wallet.initiate_account()
-
-    if options.action == "wallet":
-        if options.wallet_info:
-            wallet.get_info()
-        if options.balance:
-            wallet.get_balance()
-
-    if options.action == "contract":
-        contract = Contract(
-            logger=logger,
-            wallet=wallet
-        )
-        if options.contract_address:
-            contract.init_contract_with_adress(options.contract_address, options.contract_abi)
-        if options.contract_compile and options.contract_source:
-            contract.compile(options.contract_source)
-        if options.contract_deploy and options.contract_source and options.contract_deploy_name:
-            contract.deploy(options.contract_source)
-        if options.contract_info:
-            contract.all_functions()
-        if options.contract_call:
-            contract.call_function(options.contract_function, options.contract_function_parameters)
-        if options.contract_write:
-            contract.write_function(options.contract_function, options.contract_function_parameters, options.contract_ether)
 
     if options.action == "crypto":
         crypto = Crypto(
-            logger
+            logger=logger
         )
 
         if options.crypto_input:
@@ -125,3 +89,58 @@ if __name__ == "__main__":
         if options.crypto_action == "bruteforce":
             if options.bf_range and options.bf_value:
                 crypto.bf_keccak256(options.bf_range, options.bf_value, options.crypto_type)
+    else:
+        # Initialisation
+        provider = Provider(
+            logger=logger
+        )
+        if options.action == "wallet" and options.provider_key:
+            provider.import_key(options.provider_key)
+        provider.initiate_provider()
+
+        wallet = Wallet(
+            provider=provider,
+            logger=logger
+        )
+
+        if options.action == "wallet":
+            if options.generate:
+                wallet.generate_wallet()
+            if options.import_key:
+                wallet.import_key(options.import_key)
+        wallet.initiate_account()
+
+        if options.action == "wallet":
+            if options.wallet_info:
+                wallet.get_info()
+            if options.balance:
+                wallet.get_balance()
+
+        if options.action == "contract":
+            contract = Contract(
+                logger=logger,
+                wallet=wallet
+            )
+            if options.contract_address:
+                contract.init_contract_with_adress(options.contract_address, options.contract_abi)
+            if options.contract_compile and options.contract_source:
+                contract.compile(options.contract_source)
+            if options.contract_deploy and options.contract_source and options.contract_deploy_name:
+                contract.deploy(options.contract_source)
+            if options.contract_info:
+                contract.all_functions()
+            if options.contract_call:
+                contract.call_function(options.contract_function, options.contract_function_parameters)
+            if options.contract_write:
+                contract.write_function(options.contract_function, options.contract_function_parameters, options.contract_ether)
+
+        if options.action == "transaction":
+            transaction = Transaction(
+                logger=logger,
+                wallet=wallet,
+            )
+            if options.transaction_txn:
+                if options.transaction_block_info:
+                    transaction.get_block_info(options.transaction_txn, options.transaction_all)
+                else:
+                    transaction.get_transaction_info(options.transaction_txn)

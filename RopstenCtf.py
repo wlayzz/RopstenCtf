@@ -7,6 +7,8 @@
 
 import argparse
 from rich.console import Console
+
+from utils.Crypto import Crypto
 from utils.Provider import Provider
 from utils.Contract import Contract
 from utils.Logger import Logger
@@ -40,11 +42,24 @@ def arg_parse():
     contract_call.add_argument("-p", "--parameters", dest="contract_function_parameters", action="store", help="Parameters of function to call")
     contract_call.add_argument("-f", "--file", dest="contract_source", action="store", help="Path of smart contract to deploy")
     contract_call.add_argument("-a", "--abi", dest="contract_abi", action="store", help="abi of smart contract")
-    contract_call.add_argument("-e", "--ether", dest="contract_ether", action="store", default=0, help="abi of smart contract")
+    contract_call.add_argument("-e", "--ether", dest="contract_ether", action="store", default=0, help="Amount of ether send to smart contract")
+
+    brute_force = argparse.ArgumentParser(add_help=False)
+    brute_force.add_argument('-r', '--range', dest="bf_range", action="store", required=True, help="Range of value to brute force, exemple: 1-100, 15-70")
+    brute_force.add_argument('-v', '--value', dest="bf_value", action="store", required=True, help="Value to match with brute force")
+
+    crypto_mode = argparse.ArgumentParser(add_help=False)
+    crypto_subparser = crypto_mode.add_subparsers(help="cryto actions", dest="crypto_action")
+    crypto_subparser.add_parser("bruteforce", parents=[brute_force], help="Brute force keccak256 hash")
+    crypto_mode.add_argument("-n", dest="crypto_input", action="store", help="Input to hash")
+    input_type_options = crypto_mode.add_mutually_exclusive_group(required=False)
+    input_type_options.add_argument("-uint8", dest="crypto_type", action="store_const", const='uint8', help="Type of input to hash")
+    input_type_options.add_argument("-uint24", dest="crypto_type", action="store_const", const='uint24',  help="Type of input to hash")
 
     subparsers = parser.add_subparsers(help="actions", dest="action")
     subparsers.add_parser("wallet", parents=[wallet_mode], help="generate new wallet")
     subparsers.add_parser("contract", parents=[contract_mode], help="interact with smart contract")
+    subparsers.add_parser("crypto", parents=[crypto_mode], help="crypto utils for ethereum smart contract")
 
     options = parser.parse_args()
 
@@ -99,3 +114,14 @@ if __name__ == "__main__":
             contract.call_function(options.contract_function, options.contract_function_parameters)
         if options.contract_write:
             contract.write_function(options.contract_function, options.contract_function_parameters, options.contract_ether)
+
+    if options.action == "crypto":
+        crypto = Crypto(
+            logger
+        )
+
+        if options.crypto_input:
+            crypto.get_keccak_value(options.crypto_input, options.crypto_type)
+        if options.crypto_action == "bruteforce":
+            if options.bf_range and options.bf_value:
+                crypto.bf_keccak256(options.bf_range, options.bf_value, options.crypto_type)

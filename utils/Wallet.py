@@ -58,3 +58,4 @@ class Wallet:
 
     def get_address(self):
         self.logger.success(f"Public adress: {self.address}")
+        self.logger.info(f"Checkout your public informations here: https://ropsten.etherscan.io/address/{self.address}")

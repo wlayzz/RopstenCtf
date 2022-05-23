@@ -58,7 +58,9 @@ def arg_parse():
     input_type_options.add_argument("-uint24", dest="crypto_type", action="store_const", const='uint24',  help="Type of input to hash")
 
     transaction_mode = argparse.ArgumentParser(add_help=False)
-    transaction_mode.add_argument("--txn", dest="transaction_txn", action="store", help="Hash of transaction")
+    transaction_mode_input = transaction_mode.add_mutually_exclusive_group(required=False)
+    transaction_mode_input.add_argument("--txn", dest="transaction_txn", action="store", help="Hash of transaction")
+    transaction_mode_input.add_argument("--block-id", dest="transaction_block_id", action="store", help="Block id")
     transaction_mode.add_argument("--block-info", dest="transaction_block_info", action="store_true", help="Retrieve informations of block")
     transaction_mode.add_argument("--all", dest="transaction_all", action="store_true", default=False, help="Print all informations, hidden informations are represented by ...")
 
@@ -139,8 +141,11 @@ if __name__ == "__main__":
                 logger=logger,
                 wallet=wallet,
             )
-            if options.transaction_txn:
+            if options.transaction_txn or options.transaction_block_id:
                 if options.transaction_block_info:
-                    transaction.get_block_info(options.transaction_txn, options.transaction_all)
+                    if options.transaction_txn:
+                        transaction.get_block_info_by_txn(options.transaction_txn, options.transaction_all)
+                if options.transaction_block_id:
+                    transaction.get_block_info_by_block_id(options.transaction_block_id, options.transaction_all)
                 else:
                     transaction.get_transaction_info(options.transaction_txn)

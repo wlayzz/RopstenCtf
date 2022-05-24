@@ -2,10 +2,9 @@
 # RopstenCtf  
   
 <p align="center">  
-  RopstenCtf is an easy tool to interact with the ethereum ropsten network for ctf purpose and more.
-  <br>
   <a href="https://twitter.com/intent/follow?screen_name=wlayzz" title="Follow"><img src="https://img.shields.io/twitter/follow/wlayzz?label=Wlayzz&style=social"></a>  
-  <br>  
+  <br>
+  RopstenCtf is an easy tool to interact with the ethereum ropsten network for ctf purpose and more.
 </p>  
 
 **Supported features:** 
@@ -30,8 +29,11 @@ Install the python dependencies by running this commands :
 ### Infura api key
 To interact with ethereum blockchain you need an api key, you can use the Infura provider to generate your key. Check the documentation [here]().
 
-# ~~Quick~~ start
+# Usage
+![](./assets/cmd_help.png)
+
 ## Wallet
+![](./assets/cmd_wallet_help.png)
 ### Import the provider key
 Now import the api key generate by infura, by running:
 
@@ -52,6 +54,11 @@ If you want to see your balance or your public address, run :
 
     ./RopstenCtf
 
+## Inspecting transaction and block
+![](./assets/cmd_transaction_help.png)
+
+## Deal with smart contract
+![](./assets/cmd_contract_help.png)
 Deploying contract:  
 ./RopstenCtf.py contract --deploy --file FreeMoney.sol --name FreeMoney  
   

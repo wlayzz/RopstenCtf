@@ -17,7 +17,7 @@ from utils.Wallet import Wallet
 
 
 def arg_parse():
-    parser = argparse.ArgumentParser(description="Tools")
+    parser = argparse.ArgumentParser(description="RopstenCtf is an easy tool to interact with the ethereum ropsten network for ctf purpose and more.")
 
     # Required arguments
     parser._positionals.title = "{}Required arguments{}".format("\033[1;32m", "\033[0m")
@@ -65,7 +65,7 @@ def arg_parse():
     transaction_mode.add_argument("--all", dest="transaction_all", action="store_true", default=False, help="Print all informations, hidden informations are represented by ...")
 
     subparsers = parser.add_subparsers(help="actions", dest="action")
-    subparsers.add_parser("wallet", parents=[wallet_mode], help="generate new wallet")
+    subparsers.add_parser("wallet", parents=[wallet_mode], help="manage wallet")
     subparsers.add_parser("contract", parents=[contract_mode], help="interact with smart contract")
     subparsers.add_parser("crypto", parents=[crypto_mode], help="crypto utils for ethereum smart contract")
     subparsers.add_parser("transaction", parents=[transaction_mode], help="retrieve informations of a transaction")

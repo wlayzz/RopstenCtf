@@ -15,8 +15,18 @@ from utils.Logger import Logger
 from utils.Transaction import Transaction
 from utils.Wallet import Wallet
 
+def banner():
+    art = """
+  ___             _            ___ _    __ 
+ | _ \___ _ __ __| |_ ___ _ _ / __| |_ / _|
+ |   / _ | '_ (_-|  _/ -_| ' | (__|  _|  _|
+ |_|_\___| .__/__/\__\___|_||_\___|\__|_|   by @Wlayzz
+         |_|                               
+         """
+    print(art)
 
 def arg_parse():
+    banner()
     parser = argparse.ArgumentParser(description="RopstenCtf is an easy tool to interact with the ethereum ropsten network for ctf purpose and more.")
 
     # Required arguments

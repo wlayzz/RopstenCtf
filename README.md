@@ -1,5 +1,6 @@
-<p align="center">  
-  <br>
+![](./assets/banner.png)
+
+<p align="center">
   RopstenCtf is an easy tool to interact with the ethereum ropsten network for ctf purpose and more.
   <br>
   <br>
@@ -40,6 +41,7 @@ To interact with ethereum blockchain you need an api key, you can use the Infura
 
 ## Wallet
 ![](./assets/cmd_wallet_help.png)
+
 ### Import the provider key
 Now import the api key generate by infura, by running:
 

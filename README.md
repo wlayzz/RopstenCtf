@@ -25,7 +25,7 @@ I used the awesome [Capture the ether](https://capturetheether.com) platform mad
  - Some Ethereum cryptography utils
 
 ## Prerequisites
-### Solc *(for smart contract and compilation features only)*
+### Solc *(for smart contract deployment and compilation features only)*
 
 You need the solc binary to use somes features, follow the official documentation [here](https://solidity-fr.readthedocs.io/fr/latest/installing-solidity.html#paquets-linux) for installation. 
 I highly recommand to directly download the binary from [release](https://github.com/ethereum/solidity/releases) rename it solc and add binary to the path.

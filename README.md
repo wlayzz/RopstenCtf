@@ -8,7 +8,8 @@
 </p>  
 
 # RopstenCtf  
-This tool aims to facilitate access to web3 for everyone.
+The inspiration for this tool comes from my laziness a creating more and more script to interact with blockchain during ctfs.  
+I hope this project will facilitate access to web3 for everyone specialy during ctf.
 
 I used the awesome [Capture the ether](https://capturetheether.com) platform made by [smarx](https://twitter.com/smarx) to test this tool. 
 

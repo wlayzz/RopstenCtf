@@ -11,7 +11,7 @@
   <a href="https://twitter.com/intent/follow?screen_name=wlayzz" title="Follow"><img src="https://img.shields.io/twitter/follow/wlayzz?label=Wlayzz&style=social"></a>
 </p>
 
-> ⚠️**Disclaimer:** don't modify this tools for usage on ethereum blockchain or use at your own risk, I'm not responsible if you lose you're cryptocurrencies. This tools is for educational purpose on **Ropsten test network** only.
+> ⚠️**Disclaimer:** don't modify this tools for usage on ethereum blockchain or use at your own risk, I'm not responsible if you lose your cryptocurrencies. This tools is for educational purpose on **Ropsten test network** only.
 
 # RopstenCtf  
 The inspiration for this tool comes from my laziness creating more and more script to interact with blockchain during ctfs.  

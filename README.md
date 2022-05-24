@@ -5,7 +5,9 @@
   <br>
   <br>
   <a href="https://twitter.com/intent/follow?screen_name=wlayzz" title="Follow"><img src="https://img.shields.io/twitter/follow/wlayzz?label=Wlayzz&style=social"></a>
-</p>  
+</p>
+
+> ⚠️**Disclaimer:** don't modify this tools for usage on ethereum blockchain or use at your own risk, I'm not responsible if you lose you're cryptocurrencies. This tools is for educational purpose on **Ropsten test network** only.
 
 # RopstenCtf  
 The inspiration for this tool comes from my laziness creating more and more script to interact with blockchain during ctfs.  
@@ -26,8 +28,8 @@ I used the awesome [Capture the ether](https://capturetheether.com) platform mad
 ### Solc *(for smart contract and compilation features only)*
 
 You need the solc binary to use somes features, follow the official documentation [here](https://solidity-fr.readthedocs.io/fr/latest/installing-solidity.html#paquets-linux) for installation. 
-
-> ⚠️ If you encounter issues installing solc check the [troubleshooting section]().
+I highly recommand to directly download the binary from [release](https://github.com/ethereum/solidity/releases) rename it solc and add binary to the path.
+> ⚠️ If you encounter issues installing solc check the troubleshooting section at the bottom of this page.
 
 ### Python dependencies
 Install the python dependencies by running this commands :
@@ -44,17 +46,16 @@ To interact with ethereum blockchain you need an api key, you can use the Infura
 ![](./assets/cmd_wallet_help.png)
 
 ### Import the provider key
-Now import the api key generate by infura, by running:
+Now import the project-id from infura, by running:
 
     ./RopstenCtf.py wallet --provider-key project-id-from-infura
 ### Setup your wallet
 #### Generate a new wallet
+    ./RopstenCtf.py wallet --generate
 If you want to import the generated private key in metamask follow the documentation [here](https://metamask.zendesk.com/hc/en-us/articles/360015489331-How-to-import-an-Account#h_01G01W07NV7Q94M7P1EBD5BYM4).
 
-    ./RopstenCtf.py wallet --generate
-
 #### Or import an existing wallet
-If you want to import an existing private key, run the following:
+If you want to import an existing wallet with private key, run the following:
 
     ./RopstenCtf.py wallet --import-key your-private-key
 
@@ -68,7 +69,7 @@ If you want to import an existing private key, run the following:
     [INFO] You can claim $rETH unsing this faucet: https://faucet.egorfine.com/
     [+] Balance: 9.994406372074854 $rETH
 
-> 💡 Calling all these parameters at one is possible. 
+> 💡 Calling all these parameters at once is possible. 
 ## Inspecting transaction and block
 ![](./assets/cmd_transaction_help.png)
 
@@ -159,7 +160,7 @@ This action send a transaction to the network.
             [*] Transaction status: success
 
 > ⚠️This action can take times and will timeout after 120s, you can still see the transaction status on [ropsten etherscan](https://ropsten.etherscan.io).
->If the timeout persist, try to increase the gas price with --gas-price.
+>If the timeout persist, try to increase the gas price with --gas-price (default is 4000 gwei).
 
 #### Call smart contract function with parameters
     ./RopstenCtf.py contract --address 0x7F5d37E8645d4A8C1CD08ea712C0508e8470F9BF --call -fc guess -p 42 --ether 1
@@ -201,13 +202,15 @@ This action send a transaction to the network.
     [INFO] Transaction done
     [+] Reponse deploying contract NickName:
             [*] Transaction status: success
->⚠️This step compile and deploy 
+>⚠️This step compile and after deploy the contract on chain.
 
 # Troubleshouting  
+
+#### Error: No such file or directory: 'solc'
     "FileNotFoundError: [Errno 2] No such file or directory: 'solc'"  
 You need to install solc binary 
 
-#### Error: 'Contract source code not verified'
+#### Error: Contract source code not verified
 
     ./RopstenCtf.py contract --address 0x21Ac7a18A8e04A712EcEe9f5FB9aa25Dc2f568B4 --info
     [+] Connected to ropsten network

@@ -155,7 +155,7 @@ class Contract:
         nonce = web3.eth.get_transaction_count(self.wallet.address)
         transaction = contract_.constructor().buildTransaction({
             'gas': 2000000,
-            'gasPrice': web3.toWei('40', 'gwei'),
+            'gasPrice': web3.toWei('4000', 'gwei'),
             'from': self.wallet.address,
             'nonce': nonce,
             'value': web3.toWei(ether, 'ether')

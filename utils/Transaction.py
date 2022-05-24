@@ -1,3 +1,10 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+# File name          : EthereumCtfTool.py
+# Author             : Wlayzz (@wlayzz)
+# Date created       : 21 May 2022
+# Python Version     : 3.*
+
 from rich import inspect
 
 class Transaction:

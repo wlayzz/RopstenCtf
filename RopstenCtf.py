@@ -43,7 +43,7 @@ def arg_parse():
     contract_call.add_argument("-p", "--parameters", dest="contract_function_parameters", action="store", help="Parameters of function to call")
     contract_call.add_argument("-f", "--file", dest="contract_source", action="store", help="Path of smart contract to deploy")
     contract_call.add_argument("-a", "--abi", dest="contract_abi", action="store", help="abi of smart contract")
-    contract_call.add_argument("-e", "--ether", dest="contract_ether", action="store", default=0, help="Amount of ether send to smart contract")
+    contract_call.add_argument("-e", "--ether", dest="contract_ether", action="store", default=0, type=int, help="Amount of ether send to smart contract")
 
     brute_force = argparse.ArgumentParser(add_help=False)
     brute_force.add_argument('-r', '--range', dest="bf_range", action="store", required=True, help="Range of value to brute force, exemple: 1-100, 15-70")
@@ -79,7 +79,6 @@ if __name__ == "__main__":
     options = arg_parse()
     console = Console()
     logger = Logger(console, options.verbose)
-
 
     if options.action == "crypto":
         crypto = Crypto(
@@ -147,5 +146,5 @@ if __name__ == "__main__":
                         transaction.get_block_info_by_txn(options.transaction_txn, options.transaction_all)
                 if options.transaction_block_id:
                     transaction.get_block_info_by_block_id(options.transaction_block_id, options.transaction_all)
-                else:
-                    transaction.get_transaction_info(options.transaction_txn)
+            if options.transaction_txn:
+                transaction.get_transaction_info(options.transaction_txn)

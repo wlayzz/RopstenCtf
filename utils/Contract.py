@@ -83,43 +83,23 @@ class Contract:
                     self.logger.error(error)
 
     def write_function(self, contract_function, contract_function_parameters, ether):
-        ether=int(ether)
         parameters = []
         function = getattr(self.contract.functions, f'{contract_function}')
         web3 = self.wallet.provider.web3
         nonce = web3.eth.get_transaction_count(self.wallet.address)
+        function_string = f"{contract_function}()"
         if contract_function_parameters is not None:
-            parameters = contract_function_parameters.split(',')
-        if len(parameters) == 2:
-            parameter1 = self.get_function_parameter_type(contract_function, parameters[0], 0)
-            parameter2 = self.get_function_parameter_type(contract_function, parameters[1], 1)
-            function_string = f"{contract_function}({parameter1},{parameter2})"
-            transaction = function(parameter1, parameter2).buildTransaction({
-                'gas': 2000000,
-                'gasPrice': web3.toWei('40', 'gwei'),
-                'from': self.wallet.address,
-                'nonce': nonce,
-                'value': web3.toWei(ether, 'ether')
-            })
-        if len(parameters) == 1:
-            parameter = self.get_function_parameter_type(contract_function, contract_function_parameters, 0)
-            function_string = f"{contract_function}({parameter})"
-            transaction = function(parameter).buildTransaction({
-                'gas': 2000000,
-                'gasPrice': web3.toWei('40', 'gwei'),
-                'from': self.wallet.address,
-                'nonce': nonce,
-                'value': web3.toWei(ether, 'ether')
-            })
-        if len(parameters) == 0:
-            function_string = f"{contract_function}()"
-            transaction = function().buildTransaction({
-                'gas': 2000000,
-                'gasPrice': web3.toWei('40', 'gwei'),
-                'from': self.wallet.address,
-                'nonce': nonce,
-                'value': web3.toWei(ether, 'ether')
-            })
+            for i, p in enumerate(contract_function_parameters.split(',')):
+                parameters.append(self.get_function_parameter_type(contract_function, p, i))
+            function_string = f"{contract_function}({contract_function_parameters.split(',')})"
+
+        transaction = function(*parameters).buildTransaction({
+            'gas': 2000000,
+            'gasPrice': web3.toWei('40', 'gwei'),
+            'from': self.wallet.address,
+            'nonce': nonce,
+            'value': web3.toWei(ether, 'ether')
+        })
 
         signed_txn = web3.eth.account.signTransaction(transaction, private_key=self.wallet.private_key)
         txn_hash = web3.eth.sendRawTransaction(signed_txn.rawTransaction)
@@ -127,7 +107,7 @@ class Contract:
         self.logger.info(f'Inspect transaction here: https://ropsten.etherscan.io/tx/{txn}')
         with self.logger.console.status(f"[bold green]Sending transaction {function_string}, this can take times..."):
             try:
-                response = web3.eth.wait_for_transaction_receipt(txn_hash)
+                response = web3.eth.wait_for_transaction_receipt(txn_hash) # TODO add timeout
                 self.logger.info(f"Transaction done")
                 self.logger.success(f"Reponse {function_string}:")
                 self.parse_write_response(response)

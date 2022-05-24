@@ -4,7 +4,7 @@
   RopstenCtf is an easy tool to interact with the ethereum ropsten network for ctf purpose and more.
   <br>
   <br>
-  <a href="https://shields.io/" title="Follow"><img src="https://img.shields.io/badge/status-beta-orange.svg"></a>
+  <a href="https://shields.io/" title="Follow"><img src="https://img.shields.io/badge/Status-Beta-orange.svg"></a>
   <a href="https://shields.io/" title="Follow"><img src="https://img.shields.io/badge/Made%20with-Python-1f425f.svg"></a>
   <a href="https://shields.io/" title="Follow"><img src="https://img.shields.io/badge/License-MIT-yellow.svg"></a>
   <br>

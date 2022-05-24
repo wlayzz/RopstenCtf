@@ -179,4 +179,7 @@ class Contract:
     def compile(self, contract_source):
         contract_name = contract_source.replace('.sol', '')
         os.system(f'solc --abi --bin {contract_source} -o {contract_name} --overwrite')
+        self.logger.success(f'abi and bin files generated on directory:')
+        for file in os.listdir(contract_name):
+            self.logger.list(f"./{contract_name}/{file}")
         return contract_name

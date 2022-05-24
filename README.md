@@ -8,7 +8,7 @@
 </p>  
 
 # RopstenCtf  
-The inspiration for this tool comes from my laziness a creating more and more script to interact with blockchain during ctfs.  
+The inspiration for this tool comes from my laziness creating more and more script to interact with blockchain during ctfs.  
 I hope this project will facilitate access to web3 for everyone specialy during ctf.
 
 I used the awesome [Capture the ether](https://capturetheether.com) platform made by [smarx](https://twitter.com/smarx) to test this tool. 
@@ -25,7 +25,7 @@ I used the awesome [Capture the ether](https://capturetheether.com) platform mad
 ## Prerequisites
 ### Solc *(for smart contract and compilation features only)*
 
-You need the solc binary to use somes features, follow the official documentation [here](Prerequisites) for installation. 
+You need the solc binary to use somes features, follow the official documentation [here](https://solidity-fr.readthedocs.io/fr/latest/installing-solidity.html#paquets-linux) for installation. 
 
 > ⚠️ If you encounter issues installing solc check the [troubleshooting section]().
 
@@ -180,19 +180,32 @@ This action send a transaction to the network.
 
 ### Compiling, deploying smart contract
 >⚠️The solc binary is needed for these features.
+#### Compiling smart_contract.sol
+    ./RopstenCtf.py contract --compile -f NickName.sol
+    [+] Connected to ropsten network
+    --> NickName.sol
+    
+    [+] abi and bin files generated on directory:
+            [*] ./NickName/CaptureTheEther.abi
+            [*] ./NickName/CaptureTheEther.bin
 
+#### Deploying contract:
+    ./RopstenCtf.py contract --deploy -f NickName.sol
+    [+] Connected to ropsten network
+    --> NickName.sol
+    
+    [+] abi and bin files generated on directory:
+            [*] ./NickName/NickName.abi
+            [*] ./NickName/NickName.bin
+    [INFO] Inspect transaction here: https://ropsten.etherscan.io/tx/0xea3a3349d7284e7a7bd2dbc94ebcc20a7ffac6b96f3726251b369744ddc8c16c
+    [INFO] Transaction done
+    [+] Reponse deploying contract NickName:
+            [*] Transaction status: success
+>⚠️This step compile and deploy 
 
-Deploying contract:  
-./RopstenCtf.py contract --deploy --file FreeMoney.sol --name FreeMoney  
-  
-Troubleshouting :  
+# Troubleshouting  
     "FileNotFoundError: [Errno 2] No such file or directory: 'solc'"  
-You need to install solc binary :   
-sudo apt update  
-sudo apt install snapd  
-sudo snap install core  
-sudo systemctl start snapd  
-sudo snap install solc
+You need to install solc binary 
 
 #### Error: 'Contract source code not verified'
 
@@ -201,3 +214,11 @@ sudo snap install solc
     [INFO] Inspect contract at https://ropsten.etherscan.io/address/0x21Ac7a18A8e04A712EcEe9f5FB9aa25Dc2f568B4
     [ERROR] Contract source code not verified, try again specifying the abi file with --abi (you can compile the
     smart_contract.sol with --compile if you don't have the abi file)
+If the source code is not verified, try to compile the smart_contract.sol and specified the smart_contract.abi:
+
+    ./RopstenCtf.py contract --address 0x21Ac7a18A8e04A712EcEe9f5FB9aa25Dc2f568B4 --abi NickName/NickName.abi --info
+    [+] Connected to ropsten network
+    [INFO] Inspect contract at https://ropsten.etherscan.io/address/0x21Ac7a18A8e04A712EcEe9f5FB9aa25Dc2f568B4
+    [+] List of functions:
+            [*] nicknameOf(:address)
+            [*] setNickname(nickname:bytes32)

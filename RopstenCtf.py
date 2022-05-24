@@ -137,7 +137,7 @@ if __name__ == "__main__":
             if options.contract_compile and options.contract_source:
                 contract.compile(options.contract_source)
             if options.contract_deploy and options.contract_source:
-                contract.deploy(options.contract_source, options.ether)
+                contract.deploy(options.contract_source, options.contract_ether)
             if options.contract_info:
                 contract.all_functions()
             if options.contract_view:

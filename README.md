@@ -19,24 +19,23 @@ I hope this project will facilitate access to web3 for everyone specialy during 
 
 I used the awesome [Capture the ether](https://capturetheether.com) platform made by [smarx](https://twitter.com/smarx) to test this tool. 
 
-> 💡 You will need some $rETH to send transaction, claim $rETH unsing this faucet: https://faucet.egorfine.com/
+> 💡 You will need some $rETH to send transaction, claim $rETH using this faucet: https://faucet.egorfine.com/
 
 **Supported features:** 
  - Ethereum wallet manager
  - Deployment and compilation of smart contract
  - Interaction with on chain smart contract
- - Inspection of transactions and block
+ - Inspection of transactions and blocks
  - Some Ethereum cryptography utils
 
 ## Prerequisites
 ### Solc *(for smart contract deployment and compilation features only)*
 
 You need the solc binary to use somes features, follow the official documentation [here](https://solidity-fr.readthedocs.io/fr/latest/installing-solidity.html#paquets-linux) for installation. 
-I highly recommand to directly download the binary from [release](https://github.com/ethereum/solidity/releases) rename it solc and add binary to the path.
+I highly recommand to directly download the binary from [release](https://github.com/ethereum/solidity/releases) rename it solc and add binary to path.
 > ⚠️ If you encounter issues installing solc check the troubleshooting section at the bottom of this page.
 
 ### Python dependencies
-Install the python dependencies by running this commands :
 
     python3 -m pip install -r requirements.txt
 
@@ -59,7 +58,7 @@ Now import the project-id from infura, by running:
 If you want to import the generated private key in metamask follow the documentation [here](https://metamask.zendesk.com/hc/en-us/articles/360015489331-How-to-import-an-Account#h_01G01W07NV7Q94M7P1EBD5BYM4).
 
 #### Or import an existing wallet
-If you want to import an existing wallet with private key, run the following:
+If you want to import an existing wallet with private key follow the metamask documentation [here](https://metamask.zendesk.com/hc/en-us/articles/360015289632-How-to-Export-an-Account-Private-Key).
 
     ./RopstenCtf.py wallet --import-key your-private-key
 
@@ -149,6 +148,8 @@ If you want to import an existing wallet with private key, run the following:
     [INFO] Calling function done
     [+] Reponse isComplete(): False
 
+> 💡 No transaction will be created here.
+
 #### Call smart contract function
 
 This action send a transaction to the network.
@@ -164,7 +165,7 @@ This action send a transaction to the network.
             [*] Transaction status: success
 
 > ⚠️This action can take times and will timeout after 120s, you can still see the transaction status on [ropsten etherscan](https://ropsten.etherscan.io).
->If the timeout persist, try to increase the gas price with --gas-price (default is 4000 gwei).
+>If transaction takes a lot of time, try to increase the gas price with --gas-price (default is 4000 gwei).
 
 #### Call smart contract function with parameters
     ./RopstenCtf.py contract --address 0x7F5d37E8645d4A8C1CD08ea712C0508e8470F9BF --call -fc guess -p 42 --ether 1
@@ -178,7 +179,7 @@ This action send a transaction to the network.
             [*] Transaction status: success
 
 > 💡 Multiple parameters is supported, usage: **-p parameter1,parameter2,...**  
-> No need to worry about parameters types.
+> No need to worry about parameters types, they are handled automatically.
 
 >⚠️Notice the **-e/--ether** that send 1 $rETH, this parameter is optional it depends on the smart contract.
 

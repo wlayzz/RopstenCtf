@@ -34,8 +34,8 @@ def arg_parse():
     contract_mode.add_argument("--address", dest="contract_address", action="store", help="Address of smart contract")
     contract_mode.add_argument("--info", dest="contract_info", action="store_true", help="Informations of smart contract")
     contract_call_action = contract_mode.add_mutually_exclusive_group(required=False)
+    contract_call_action.add_argument("--view", dest="contract_view", action="store_true", help="Call function of smart contract")
     contract_call_action.add_argument("--call", dest="contract_call", action="store_true", help="Call function of smart contract")
-    contract_call_action.add_argument("--write", dest="contract_write", action="store_true", help="Call function of smart contract")
     contract_call_action.add_argument("--deploy", dest="contract_deploy", action="store_true", help="Deploy a smart contract")
     contract_call_action.add_argument("--compile", dest="contract_compile", action="store_true", help="Compile a smart contract")
     contract_call = contract_call_action.add_argument_group("Function to call with parameters")
@@ -43,7 +43,7 @@ def arg_parse():
     contract_call.add_argument("-p", "--parameters", dest="contract_function_parameters", action="store", help="Parameters of function to call")
     contract_call.add_argument("-f", "--file", dest="contract_source", action="store", help="Path of smart contract to deploy")
     contract_call.add_argument("-a", "--abi", dest="contract_abi", action="store", help="abi of smart contract")
-    contract_call.add_argument("-e", "--ether", dest="contract_ether", action="store", default=0, type=int, help="Amount of ether send to smart contract")
+    contract_call.add_argument("-e", "--ether", dest="contract_ether", action="store", default=0, type=int, help="Amount of ether send in transaction, default is 0")
 
     brute_force = argparse.ArgumentParser(add_help=False)
     brute_force.add_argument('-r', '--range', dest="bf_range", action="store", required=True, help="Range of value to brute force, exemple: 1-100, 15-70")
@@ -54,8 +54,8 @@ def arg_parse():
     crypto_subparser.add_parser("bruteforce", parents=[brute_force], help="Brute force keccak256 hash")
     crypto_mode.add_argument("-n", dest="crypto_input", action="store", help="Input to hash")
     input_type_options = crypto_mode.add_mutually_exclusive_group(required=False)
-    input_type_options.add_argument("-uint8", dest="crypto_type", action="store_const", const='uint8', help="Type of input to hash")
-    input_type_options.add_argument("-uint24", dest="crypto_type", action="store_const", const='uint24',  help="Type of input to hash")
+    input_type_options.add_argument("--uint8", dest="crypto_type", action="store_const", const='uint8', help="Type of input to hash")
+    input_type_options.add_argument("--uint24", dest="crypto_type", action="store_const", const='uint24',  help="Type of input to hash")
 
     transaction_mode = argparse.ArgumentParser(add_help=False)
     transaction_mode_input = transaction_mode.add_mutually_exclusive_group(required=False)
@@ -126,13 +126,13 @@ if __name__ == "__main__":
                 contract.init_contract_with_adress(options.contract_address, options.contract_abi)
             if options.contract_compile and options.contract_source:
                 contract.compile(options.contract_source)
-            if options.contract_deploy and options.contract_source and options.contract_deploy_name:
-                contract.deploy(options.contract_source)
+            if options.contract_deploy and options.contract_source:
+                contract.deploy(options.contract_source, options.ether)
             if options.contract_info:
                 contract.all_functions()
-            if options.contract_call:
+            if options.contract_view:
                 contract.call_function(options.contract_function, options.contract_function_parameters)
-            if options.contract_write:
+            if options.contract_call:
                 contract.write_function(options.contract_function, options.contract_function_parameters, options.contract_ether)
 
         if options.action == "transaction":
@@ -144,7 +144,10 @@ if __name__ == "__main__":
                 if options.transaction_block_info:
                     if options.transaction_txn:
                         transaction.get_block_info_by_txn(options.transaction_txn, options.transaction_all)
+                        exit()
                 if options.transaction_block_id:
                     transaction.get_block_info_by_block_id(options.transaction_block_id, options.transaction_all)
+                    exit()
             if options.transaction_txn:
                 transaction.get_transaction_info(options.transaction_txn)
+                exit()

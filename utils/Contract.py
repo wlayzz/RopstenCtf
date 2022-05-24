@@ -9,6 +9,8 @@ import requests
 from web3 import exceptions
 import os
 
+SOURCE_CODE_NOT_VERIFIED = b'Contract source code not verified'
+
 ABI_ENDPOINT = 'https://api-ropsten.etherscan.io/api?module=contract&action=getabi&address='
 RAW_FORMAT = '&format=raw'
 
@@ -56,8 +58,16 @@ class Contract:
     def __get_abi(self):
         endpoint = '%s%s%s' % (ABI_ENDPOINT, self.address, RAW_FORMAT)
         with self.logger.console.status("[bold green]Fetching abi..."):
-            response = requests.get(endpoint)
-        self.logger.info(f"Fetching abi done")
+            try:
+                response = requests.get(endpoint)
+            except:
+                self.logger.error('Fetching abi failed')
+                self.logger.debug(f'Request status: {response.status_code}')
+                exit()
+        if response.content == SOURCE_CODE_NOT_VERIFIED:
+            self.logger.error('Contract source code not verified, try again specifying the abi file with --abi (you can compile the smart_contract.sol with --compile if you don\'t have the abi file)')
+            exit()
+        self.logger.info("Fetching abi done")
         return response.content.decode('utf-8')
 
     def call_function(self, contract_function, contract_function_parameters):
@@ -89,13 +99,18 @@ class Contract:
         nonce = web3.eth.get_transaction_count(self.wallet.address)
         function_string = f"{contract_function}()"
         if contract_function_parameters is not None:
+            function_string = f"{contract_function}("
             for i, p in enumerate(contract_function_parameters.split(',')):
-                parameters.append(self.get_function_parameter_type(contract_function, p, i))
-            function_string = f"{contract_function}({contract_function_parameters.split(',')})"
+                parameter_with_type = self.get_function_parameter_type(contract_function, p, i)
+                parameters.append(parameter_with_type)
+                function_string += f"{parameter_with_type}"
+                if p is not contract_function_parameters.split(',')[-1]:
+                    function_string += f","
+            function_string += ")"
 
         transaction = function(*parameters).buildTransaction({
             'gas': 2000000,
-            'gasPrice': web3.toWei('40', 'gwei'),
+            'gasPrice': web3.toWei('4000', 'gwei'),
             'from': self.wallet.address,
             'nonce': nonce,
             'value': web3.toWei(ether, 'ether')
@@ -124,7 +139,7 @@ class Contract:
         else:
             self.logger.console.print("\t{}[*]{} Transaction status: {}success{}".format("[bold blue]", "[/bold blue]", "[bold green]", "[/bold green]"), highlight=False)
 
-    def deploy(self, contract_source):
+    def deploy(self, contract_source, ether):
         contract_name = self.compile(contract_source)
 
         with open(f'{contract_name}/{contract_name}.abi', 'r') as f:
@@ -142,7 +157,8 @@ class Contract:
             'gas': 2000000,
             'gasPrice': web3.toWei('40', 'gwei'),
             'from': self.wallet.address,
-            'nonce': nonce
+            'nonce': nonce,
+            'value': web3.toWei(ether, 'ether')
         })
 
         signed_txn = web3.eth.account.signTransaction(transaction, private_key=self.wallet.private_key)

@@ -49,7 +49,7 @@ class Contract:
             if function == f.fn_name:
                 if f.abi["inputs"][index]['type'] == 'uint256' or f.abi["inputs"][index]['type'] == 'uint8':
                     return int(parameter)
-                if f.abi["inputs"][index]['type'] == 'address':
+                if f.abi["inputs"][index]['type'] == 'address' or f.abi["inputs"][index]['type'] == 'string':
                     return str(parameter)
                 if f.abi["inputs"][index]['type'] == 'bytes32':
                     return bytes(parameter, 'utf-8')
@@ -70,7 +70,7 @@ class Contract:
         self.logger.info("Fetching abi done")
         return response.content.decode('utf-8')
 
-    def call_function(self, contract_function, contract_function_parameters):
+    def view_function(self, contract_function, contract_function_parameters):
         function = getattr(self.contract.functions, f'{contract_function}')
         if contract_function_parameters:
             parameter = self.get_function_parameter_type(contract_function, contract_function_parameters, 0)
@@ -92,7 +92,7 @@ class Contract:
                 except exceptions.SolidityError as error:
                     self.logger.error(error)
 
-    def write_function(self, contract_function, contract_function_parameters, ether):
+    def call_function(self, contract_function, contract_function_parameters, ether):
         parameters = []
         function = getattr(self.contract.functions, f'{contract_function}')
         web3 = self.wallet.provider.web3

@@ -141,9 +141,9 @@ if __name__ == "__main__":
             if options.contract_info:
                 contract.all_functions()
             if options.contract_view:
-                contract.call_function(options.contract_function, options.contract_function_parameters)
+                contract.view_function(options.contract_function, options.contract_function_parameters)
             if options.contract_call:
-                contract.write_function(options.contract_function, options.contract_function_parameters, options.contract_ether)
+                contract.call_function(options.contract_function, options.contract_function_parameters, options.contract_ether)
 
         if options.action == "transaction":
             transaction = Transaction(

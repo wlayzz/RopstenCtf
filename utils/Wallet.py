@@ -24,7 +24,7 @@ class Wallet:
             load_dotenv()
             self.private_key = os.getenv("private_key")
             self.address = os.getenv("address")
-        if self.private_key is not None and self.address is not None:
+        if self.private_key is not None and self.private_key != 'None' and self.address is not None and self.address != 'None':
             acnt = self.provider.web3.eth.account.privateKeyToAccount(self.private_key)
             self.provider.web3.eth.defaultAccount = acnt.address
             self.account_address = acnt.address
